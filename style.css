@@ -1,0 +1,871 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1a1a1a;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* Hiệu ứng chuyển động từ trên xuống dưới */
+
+@keyframes moveTopToBottom {
+    0% {
+        transform: translateY(0);
+        opacity: 0.1;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(calc(100vh + 200px));
+        opacity: 0.1;
+    }
+}
+
+
+/* Hiệu ứng chuyển động từ dưới lên trên */
+
+@keyframes moveBottomToTop {
+    0% {
+        transform: translateY(0);
+        opacity: 0.1;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(calc(-100vh - 200px));
+        opacity: 0.1;
+    }
+}
+
+
+/* Hiệu ứng chuyển động từ trái sang phải */
+
+@keyframes moveLeftToRight {
+    0% {
+        transform: translateX(0);
+        opacity: 0.1;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(calc(100vw + 200px));
+        opacity: 0.1;
+    }
+}
+
+
+/* Hiệu ứng chuyển động từ phải sang trái */
+
+@keyframes moveRightToLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 0.1;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(calc(-100vw - 200px));
+        opacity: 0.1;
+    }
+}
+
+
+/* Hiệu ứng nhảy nhẹ */
+
+@keyframes floatUpDown {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+/* Hiệu ứng đập nhịp cho trái tim */
+
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.2);
+    }
+    50% {
+        transform: scale(1);
+    }
+    75% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* Hiệu ứng fade in */
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+}
+
+
+/* Lớp di chuyển dọc chung */
+
+.vertical-moving {
+    position: absolute;
+    opacity: 1;
+    animation-name: moveTopToBottom;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    will-change: transform, opacity;
+}
+
+
+/* Đảo ngược hướng di chuyển */
+
+.vertical-moving.reverse {
+    animation-name: moveBottomToTop;
+}
+
+
+/* Thêm lớp để di chuyển ngang */
+
+.horizontal-moving {
+    position: absolute;
+    opacity: 1;
+    animation-name: moveLeftToRight;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    will-change: transform, opacity;
+}
+
+
+/* Đảo ngược hướng di chuyển ngang */
+
+.horizontal-moving.reverse {
+    animation-name: moveRightToLeft;
+}
+
+
+/* Phần tử nằm ngoài màn hình */
+
+.off-screen {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    animation-play-state: paused !important;
+}
+
+
+/* Style cho ảnh */
+
+.photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, opacity 0.3s, box-shadow 0.3s;
+    animation-duration: 25s;
+    will-change: transform, opacity;
+    box-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
+    opacity: 0;
+}
+
+
+/* Hiệu ứng phóng to khi hover và nhấp vào ảnh */
+
+.photo:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
+    z-index: 50;
+}
+
+.photo.zoomed {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(3);
+    z-index: 1000;
+    max-width: 80vw;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    animation: none !important;
+    box-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
+    opacity: 1 !important;
+}
+
+
+/* Lớp overlay khi phóng to ảnh */
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    cursor: pointer;
+    backdrop-filter: blur(3px);
+}
+
+
+/* Style cho trái tim */
+
+.heart {
+    position: absolute;
+    background-color: pink;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s, background-color 0.5s;
+    animation-duration: 20s;
+    will-change: transform, opacity;
+    box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+}
+
+.heart:hover {
+    filter: drop-shadow(0 0 15px rgba(255, 20, 147, 1));
+    transform: rotate(-45deg) scale(1.2);
+}
+
+.heart:before,
+.heart:after {
+    content: "";
+    background-color: inherit;
+    /* Sử dụng màu giống phần tử cha */
+    border-radius: 50%;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.heart:before {
+    top: -50%;
+    left: 0;
+}
+
+.heart:after {
+    left: 50%;
+    top: 0;
+}
+
+.heart.sparkle {
+    animation: sparkle 1.5s infinite ease-in-out !important;
+}
+
+.heart.spin {
+    animation: spin 3s infinite linear !important;
+}
+
+.heart.bounce {
+    animation: bounce 1.5s infinite ease-in-out !important;
+}
+
+
+/* Style cho thông điệp di chuyển */
+
+.moving-message {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #ff1493;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    white-space: nowrap;
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s, background-color 0.5s;
+    animation-duration: 25s;
+    will-change: transform, opacity;
+    box-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
+    text-align: center;
+}
+
+.moving-message:hover {
+    transform: scale(1.1) !important;
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 50;
+}
+
+
+/* Ảnh test để debug */
+
+.test-photo {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 100px;
+    height: 100px;
+    z-index: 9999;
+    border: 2px solid red;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+/* Đảm bảo tất cả container hiển thị đúng */
+
+#hearts-container,
+#photos-container,
+#messages-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 10;
+    will-change: contents;
+}
+
+
+/* Đảm bảo phần tử trong container vẫn có thể tương tác */
+
+#hearts-container *,
+#photos-container *,
+#messages-container * {
+    pointer-events: auto;
+}
+
+
+/* Photos container cần cho phép tương tác */
+
+#photos-container {
+    pointer-events: auto;
+    z-index: 20;
+}
+
+
+/* Messages container hiển thị ở trên cùng */
+
+#messages-container {
+    z-index: 30;
+}
+
+
+/* Đảm bảo phần tử trong container vẫn có thể tương tác */
+
+#hearts-container *,
+#photos-container *,
+#messages-container * {
+    pointer-events: auto;
+}
+
+
+/* Hiệu ứng nẩy khi nhấn vào */
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+
+/* Áp dụng hiệu ứng nẩy */
+
+.bounce {
+    animation: bounce 1.5s infinite ease-in-out !important;
+}
+
+
+/* Responsive styles */
+
+@media (max-width: 768px) {
+    .photo {
+        width: 60px;
+        height: 60px;
+        animation-duration: 20s;
+    }
+    .heart {
+        animation-duration: 15s;
+    }
+    .moving-message {
+        animation-duration: 20s;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    .photo.zoomed {
+        transform: translate(-50%, -50%) scale(2);
+        max-width: 90vw;
+        max-height: 90vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .photo {
+        width: 50px;
+        height: 50px;
+        animation-duration: 20s;
+    }
+    .heart {
+        animation-duration: 15s;
+    }
+    .moving-message {
+        animation-duration: 20s;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    .photo.zoomed {
+        transform: translate(-50%, -50%) scale(1.5);
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+}
+
+.container {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+    color: #ff1493;
+    /* Màu chữ hồng đậm */
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s infinite;
+    text-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
+}
+
+h2 {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    color: #ff69b4;
+    animation: pulse 3s infinite 1s;
+}
+
+.message {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 1.8rem;
+    border-radius: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
+    animation: pulse 4s infinite 2s;
+}
+
+.message p {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #ff1493;
+    font-weight: bold;
+}
+
+.message p.tip {
+    font-size: 1rem;
+    color: #ff69b4;
+    font-style: italic;
+    margin-top: 15px;
+    border-top: 1px dashed #ff69b4;
+    padding-top: 10px;
+}
+
+
+/* Kiểu dáng cho lời chúc di chuyển */
+
+.moving-message {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 12px 20px;
+    border-radius: 30px;
+    box-shadow: 0 0 20px rgba(255, 20, 147, 0.7);
+    color: #ff1493;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    z-index: 5;
+    border: 2px solid rgba(255, 20, 147, 0.5);
+    transition: opacity 0.3s ease;
+}
+
+.moving-message.vertical-moving {
+    animation-duration: 20s;
+}
+
+
+/* Kiểu dáng cho nút */
+
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+button {
+    background-color: #ff1493;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(255, 20, 147, 0.3);
+}
+
+button:hover {
+    background-color: #ff69b4;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(255, 20, 147, 0.4);
+}
+
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(255, 20, 147, 0.2);
+}
+
+
+/* Kiểu dáng cho trái tim */
+
+.heart {
+    position: absolute;
+    background-color: #ff1493;
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    transform: rotate(-45deg);
+    filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.8));
+    z-index: 5;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.heart:hover {
+    filter: drop-shadow(0 0 15px rgba(255, 20, 147, 1));
+    transform: rotate(-45deg) scale(1.2);
+}
+
+.heart:before,
+.heart:after {
+    content: "";
+    background-color: inherit;
+    /* Sử dụng màu giống phần tử cha */
+    border-radius: 50%;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.heart:before {
+    top: -50%;
+    left: 0;
+}
+
+.heart:after {
+    left: 50%;
+    top: 0;
+}
+
+
+/* Kiểu dáng cho ảnh */
+
+.photo {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #ff1493;
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(255, 20, 147, 0.8);
+    z-index: 5;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    filter: brightness(1.1) contrast(1.1);
+}
+
+.photo:hover {
+    transform: scale(1.3) !important;
+    border-width: 6px;
+    z-index: 15;
+    box-shadow: 0 0 30px rgba(255, 20, 147, 1);
+}
+
+.photo.zoomed {
+    position: fixed;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(4) !important;
+    width: 300px;
+    height: 300px;
+    z-index: 100;
+    border-width: 8px;
+    border-radius: 15px;
+    animation: none !important;
+    box-shadow: 0 0 70px rgba(0, 0, 0, 0.8);
+    opacity: 1;
+}
+
+.photo.vertical-moving {
+    animation-duration: 25s;
+}
+
+
+/* Hiệu ứng hoạt ảnh */
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Media queries cho điện thoại di động */
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    h2 {
+        font-size: 1.8rem;
+    }
+    .message {
+        padding: 1.2rem;
+        max-width: 95%;
+    }
+    .message p {
+        font-size: 1.4rem;
+    }
+    .moving-message {
+        font-size: 1rem;
+        padding: 8px 16px;
+        max-width: 80vw;
+        white-space: normal;
+        text-align: center;
+    }
+    .photo {
+        width: 90px;
+        height: 90px;
+    }
+    .photo.zoomed {
+        transform: translate(-50%, -50%) scale(2.5) !important;
+        width: 200px;
+        height: 200px;
+    }
+    .heart {
+        /* Giảm kích thước tim trên điện thoại */
+        transform: scale(0.8) rotate(-45deg);
+    }
+    /* Tối ưu hiệu năng cho điện thoại */
+    .heart,
+    .photo,
+    .moving-message {
+        will-change: transform, opacity;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+    }
+    /* Đơn giản hóa hiệu ứng di chuyển cho điện thoại */
+    @keyframes moveTopToBottom {
+        0% {
+            transform: translateY(-120vh);
+        }
+        100% {
+            transform: translateY(120vh);
+        }
+    }
+    @keyframes moveBottomToTop {
+        0% {
+            transform: translateY(120vh);
+        }
+        100% {
+            transform: translateY(-120vh);
+        }
+    }
+    /* Điều chỉnh vị trí container chính */
+    .container {
+        padding: 1rem;
+    }
+    /* Đảm bảo các phần tử không chồng lên nội dung chính */
+    .photo,
+    .heart,
+    .moving-message {
+        z-index: 2;
+    }
+    /* Làm cho nội dung chính luôn có thể đọc được */
+    .message {
+        background-color: rgba(255, 255, 255, 0.85);
+        z-index: 10;
+        position: relative;
+    }
+    /* Giảm độ phức tạp của hiệu ứng pulse */
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        100% {
+            transform: scale(1.05);
+        }
+    }
+    /* Đảm bảo hiệu ứng chuyển động mượt mà trên điện thoại */
+    .vertical-moving.reverse,
+    .vertical-moving {
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+    /* Giảm thời gian animation trên điện thoại để tối ưu hiệu suất */
+    .photo.vertical-moving {
+        animation-duration: 20s;
+    }
+    .moving-message.vertical-moving {
+        animation-duration: 15s;
+    }
+    .heart.vertical-moving {
+        animation-duration: 18s;
+    }
+}
+
+
+/* Media queries cho điện thoại nhỏ */
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
+    .message p {
+        font-size: 1.2rem;
+    }
+    .moving-message {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+    .photo {
+        width: 70px;
+        height: 70px;
+    }
+    .photo.zoomed {
+        transform: translate(-50%, -50%) scale(2) !important;
+        width: 150px;
+        height: 150px;
+    }
+    /* Thêm lề cho nội dung chính */
+    .container {
+        padding: 0.8rem;
+    }
+    /* Điều chỉnh vị trí các phần tử để tránh va chạm */
+    .moving-message {
+        max-width: 85vw;
+        box-sizing: border-box;
+    }
+    /* Cải thiện hiệu năng bằng cách giảm độ phức tạp của shadow */
+    .photo,
+    .moving-message {
+        box-shadow: 0 0 10px rgba(255, 20, 147, 0.6);
+    }
+    /* Tối ưu hiệu ứng nhấp chuột trên điện thoại */
+    .photo.zoomed {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    }
+    /* Thêm "touch" hiển thị cho điện thoại */
+    .message::after {
+        content: "(Chạm vào màn hình để thêm trái tim)";
+        display: block;
+        font-size: 0.8rem;
+        margin-top: 10px;
+        font-style: italic;
+        color: #ff69b4;
+    }
+}
+
+
+/* Tối ưu hiệu suất và thêm hiệu ứng mới */
+
+@keyframes sparkle {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
+    }
+    50% {
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 1));
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
