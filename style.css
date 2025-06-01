@@ -96,7 +96,7 @@ body {
 }
 
 
-/* Hiệu ứng nhảy nhẹ */
+/* Hiệu ứng nẩy nhẹ */
 
 @keyframes floatUpDown {
     0% {
@@ -160,6 +160,7 @@ body {
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     will-change: transform, opacity;
+    transform: translateZ(0);
 }
 
 
@@ -180,6 +181,7 @@ body {
     animation-iteration-count: 1;
     animation-fill-mode: forwards;
     will-change: transform, opacity;
+    transform: translateZ(0);
 }
 
 
@@ -212,6 +214,8 @@ body {
     will-change: transform, opacity;
     box-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
     opacity: 0;
+    transform: translateZ(0);
+    contain: layout paint style;
 }
 
 
@@ -268,6 +272,8 @@ body {
     animation-duration: 20s;
     will-change: transform, opacity;
     box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+    transform: translateZ(0);
+    contain: layout paint style;
 }
 
 .heart:hover {
@@ -325,6 +331,8 @@ body {
     will-change: transform, opacity;
     box-shadow: 0 0 10px rgba(255, 20, 147, 0.3);
     text-align: center;
+    transform: translateZ(0);
+    contain: layout paint style;
 }
 
 .moving-message:hover {
@@ -363,6 +371,7 @@ body {
     pointer-events: none;
     z-index: 10;
     will-change: contents;
+    transform: translateZ(0);
 }
 
 
@@ -426,14 +435,17 @@ body {
         width: 60px;
         height: 60px;
         animation-duration: 20s;
+        box-shadow: 0 0 5px rgba(255, 20, 147, 0.3);
     }
     .heart {
         animation-duration: 15s;
+        box-shadow: 0 0 5px rgba(255, 20, 147, 0.5);
     }
     .moving-message {
         animation-duration: 20s;
         font-size: 14px;
         padding: 8px 12px;
+        box-shadow: 0 0 5px rgba(255, 20, 147, 0.3);
     }
     .photo.zoomed {
         transform: translate(-50%, -50%) scale(2);
@@ -450,6 +462,8 @@ body {
     }
     .heart {
         animation-duration: 15s;
+        width: 15px !important;
+        height: 15px !important;
     }
     .moving-message {
         animation-duration: 20s;
@@ -465,19 +479,29 @@ body {
 
 .container {
     position: relative;
-    z-index: 10;
+    z-index: 100;
     text-align: center;
-    padding: 2rem;
+    padding: 20px;
     color: #ff1493;
-    /* Màu chữ hồng đậm */
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255, 20, 147, 0.5);
+    backdrop-filter: blur(5px);
+    margin-top: 50px;
+}
+
+h1,
+h2 {
+    margin: 10px 0;
+    text-shadow: 0 0 10px rgba(255, 20, 147, 0.8);
 }
 
 h1 {
     font-size: 3.5rem;
     margin-bottom: 1rem;
     animation: pulse 2s infinite;
-    text-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
 }
 
 h2 {
@@ -868,4 +892,71 @@ button:active {
     50% {
         transform: translateY(-15px);
     }
+}
+
+
+/* Lớp để tạm dừng tất cả animation khi trang bị ẩn */
+
+.pause-animations * {
+    animation-play-state: paused !important;
+}
+
+
+/* Chế độ hiệu suất thấp */
+
+.low-performance {
+    /* Giảm hiệu ứng shadow */
+    --shadow-intensity: 0.3;
+}
+
+.low-performance .heart,
+.low-performance .photo,
+.low-performance .moving-message {
+    /* Tắt hiệu ứng bóng đổ */
+    box-shadow: none !important;
+    /* Giảm độ phức tạp của animation */
+    animation-timing-function: linear !important;
+}
+
+.low-performance .heart {
+    /* Đơn giản hóa hình dạng */
+    border-radius: 50% !important;
+}
+
+.low-performance .sparkle,
+.low-performance .spin,
+.low-performance .bounce,
+.low-performance .pulse,
+.low-performance .floatUpDown,
+.low-performance .heartbeat {
+    /* Tắt các hiệu ứng phức tạp */
+    animation: none !important;
+}
+
+.low-performance .overlay {
+    /* Tắt hiệu ứng làm mờ */
+    backdrop-filter: none !important;
+}
+
+.low-performance .container {
+    /* Đơn giản hóa container */
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+
+/* Hiển thị thông báo hiệu suất thấp */
+
+.low-performance::before {
+    content: "Chế độ hiệu suất thấp đã được kích hoạt";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    z-index: 9999;
+    opacity: 0.7;
 }

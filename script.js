@@ -44,64 +44,64 @@ document.addEventListener('DOMContentLoaded', function() {
     // Giới hạn số lượng phần tử tối đa dựa trên loại thiết bị
     if (isSmallMobile) {
         // Điện thoại nhỏ - điều chỉnh số lượng phù hợp
-        window.maxHearts = 100;
+        window.maxHearts = 50;
+        window.maxPhotos = 20;
+        window.maxMessages = 15;
+
+        // Tạo phần tử ban đầu
+        createHearts(20);
+        createPhotos(8);
+        createMovingMessages(6);
+    } else if (isMobile) {
+        // Điện thoại thông thường
+        window.maxHearts = 80;
+        window.maxPhotos = 30;
+        window.maxMessages = 20;
+
+        // Tạo phần tử ban đầu
+        createHearts(30);
+        createPhotos(12);
+        createMovingMessages(10);
+    } else {
+        // Máy tính - số lượng nhiều hơn
+        window.maxHearts = 120;
         window.maxPhotos = 40;
         window.maxMessages = 30;
 
         // Tạo phần tử ban đầu
-        createHearts(50);
-        createPhotos(20);
+        createHearts(40);
+        createPhotos(15);
         createMovingMessages(15);
-    } else if (isMobile) {
-        // Điện thoại thông thường
-        window.maxHearts = 150;
-        window.maxPhotos = 60;
-        window.maxMessages = 50;
-
-        // Tạo phần tử ban đầu
-        createHearts(80);
-        createPhotos(30);
-        createMovingMessages(25);
-    } else {
-        // Máy tính - số lượng nhiều hơn
-        window.maxHearts = 300;
-        window.maxPhotos = 100;
-        window.maxMessages = 80;
-
-        // Tạo phần tử ban đầu
-        createHearts(150);
-        createPhotos(50);
-        createMovingMessages(40);
     }
 
     // Khoảng thời gian tạo thêm phần tử tùy theo thiết bị
-    const heartInterval = isMobile ? 2000 : 1500;
-    const photoInterval = isMobile ? 4000 : 3000;
-    const messageInterval = isMobile ? 3000 : 2500;
+    const heartInterval = isMobile ? 3000 : 2500;
+    const photoInterval = isMobile ? 5000 : 4000;
+    const messageInterval = isMobile ? 4000 : 3500;
 
     // Tạo thêm trái tim định kỳ nếu cần
     setInterval(() => {
         if (window.currentHearts < window.maxHearts) {
-            createHearts(isMobile ? 5 : 8);
+            createHearts(isMobile ? 2 : 3);
         }
     }, heartInterval);
 
     // Tạo thêm ảnh định kỳ nếu cần
     setInterval(() => {
         if (window.currentPhotos < window.maxPhotos) {
-            createPhotos(isMobile ? 3 : 5);
+            createPhotos(isMobile ? 1 : 2);
         }
     }, photoInterval);
 
     // Tạo thêm lời chúc định kỳ nếu cần
     setInterval(() => {
         if (window.currentMessages < window.maxMessages) {
-            createMovingMessages(isMobile ? 3 : 5);
+            createMovingMessages(isMobile ? 1 : 2);
         }
     }, messageInterval);
 
     // Thiết lập theo dõi animation để tạo hiệu ứng lặp lại
-    setInterval(checkAndResetElements, 800);
+    setInterval(checkAndResetElements, 1000);
 
     // Khởi tạo kiểm tra phần tử đầu tiên
     setTimeout(checkAndResetElements, 3000);
@@ -122,17 +122,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Chỉ cập nhật nếu trạng thái thiết bị thay đổi
         if (newIsSmallMobile !== isSmallMobile || newIsMobile !== isMobile) {
             if (newIsSmallMobile) {
-                window.maxHearts = 100;
+                window.maxHearts = 50;
+                window.maxPhotos = 20;
+                window.maxMessages = 15;
+            } else if (newIsMobile) {
+                window.maxHearts = 80;
+                window.maxPhotos = 30;
+                window.maxMessages = 20;
+            } else {
+                window.maxHearts = 120;
                 window.maxPhotos = 40;
                 window.maxMessages = 30;
-            } else if (newIsMobile) {
-                window.maxHearts = 150;
-                window.maxPhotos = 60;
-                window.maxMessages = 50;
-            } else {
-                window.maxHearts = 300;
-                window.maxPhotos = 100;
-                window.maxMessages = 80;
             }
         }
     });
@@ -153,6 +153,105 @@ window.gridSystem = {
     marginX: 20, // Khoảng cách giữa các cột
     marginY: 40 // Khoảng cách giữa các hàng
 };
+
+// Biến theo dõi hiệu suất
+window.performanceMetrics = {
+    fps: 0,
+    lastFrameTime: 0,
+    frameCount: 0,
+    lowPerformanceMode: false
+};
+
+// Biến lưu trữ ảnh đã tải trước
+window.preloadedImages = {};
+
+// Tải trước ảnh để cải thiện hiệu suất
+function preloadImages() {
+    console.log("Bắt đầu tải trước ảnh...");
+
+    photoUrls.forEach((url, index) => {
+        const img = new Image();
+        img.onload = function() {
+            window.preloadedImages[url] = true;
+            console.log(`Đã tải ảnh ${index + 1}/${photoUrls.length}: ${url}`);
+        };
+        img.onerror = function() {
+            console.error(`Lỗi tải ảnh: ${url}`);
+        };
+        img.src = url;
+    });
+}
+
+// Theo dõi hiệu suất và tự động điều chỉnh
+function monitorPerformance() {
+    const now = performance.now();
+    const elapsed = now - window.performanceMetrics.lastFrameTime;
+
+    if (elapsed >= 1000) { // Cập nhật mỗi giây
+        window.performanceMetrics.fps = Math.round((window.performanceMetrics.frameCount * 1000) / elapsed);
+        window.performanceMetrics.frameCount = 0;
+        window.performanceMetrics.lastFrameTime = now;
+
+        // Kiểm tra nếu FPS quá thấp, chuyển sang chế độ hiệu suất thấp
+        if (window.performanceMetrics.fps < 30 && !window.performanceMetrics.lowPerformanceMode) {
+            console.log("Phát hiện hiệu suất thấp, đang tối ưu hóa...");
+            window.performanceMetrics.lowPerformanceMode = true;
+
+            // Giảm số lượng phần tử tối đa
+            window.maxHearts = Math.floor(window.maxHearts * 0.6);
+            window.maxPhotos = Math.floor(window.maxPhotos * 0.6);
+            window.maxMessages = Math.floor(window.maxMessages * 0.6);
+
+            // Thêm lớp cho phép tối ưu CSS
+            document.body.classList.add('low-performance');
+
+            // Xóa bớt phần tử hiện có
+            removeExcessElements();
+        }
+    }
+
+    window.performanceMetrics.frameCount++;
+    requestAnimationFrame(monitorPerformance);
+}
+
+// Xóa bớt phần tử để tăng hiệu suất
+function removeExcessElements() {
+    // Xóa bớt trái tim
+    const hearts = document.querySelectorAll('#hearts-container .heart');
+    const heartsToRemove = hearts.length - window.maxHearts;
+    if (heartsToRemove > 0) {
+        for (let i = 0; i < heartsToRemove; i++) {
+            if (hearts[i]) {
+                hearts[i].remove();
+                window.currentHearts--;
+            }
+        }
+    }
+
+    // Xóa bớt ảnh
+    const photos = document.querySelectorAll('#photos-container .photo');
+    const photosToRemove = photos.length - window.maxPhotos;
+    if (photosToRemove > 0) {
+        for (let i = 0; i < photosToRemove; i++) {
+            if (photos[i]) {
+                photos[i].remove();
+                window.currentPhotos--;
+            }
+        }
+    }
+
+    // Xóa bớt tin nhắn
+    const messages = document.querySelectorAll('#messages-container .moving-message');
+    const messagesToRemove = messages.length - window.maxMessages;
+    if (messagesToRemove > 0) {
+        for (let i = 0; i < messagesToRemove; i++) {
+            if (messages[i]) {
+                messages[i].remove();
+                window.currentMessages--;
+            }
+        }
+    }
+}
 
 // Thiết lập hệ thống lưới vị trí
 function setupPositionGrid() {
@@ -667,6 +766,9 @@ function createHearts(count = 30) {
 
     if (numberOfHearts <= 0) return; // Không tạo thêm nếu đã đạt giới hạn
 
+    // Tạo fragment để giảm số lần reflow
+    const fragment = document.createDocumentFragment();
+
     // Phân bố đều các trái tim trên màn hình
     for (let i = 0; i < numberOfHearts; i++) {
         const heart = document.createElement('div');
@@ -709,8 +811,8 @@ function createHearts(count = 30) {
         const lightness = 55 + Math.random() * 25; // Độ sáng thay đổi
         heart.style.backgroundColor = `hsl(${330 + hue}, ${saturation}%, ${lightness}%)`;
 
-        // Thêm hiệu ứng ngẫu nhiên cho trái tim
-        const effects = ['heartbeat', 'none', 'floatUpDown', 'pulse', 'sparkle', 'spin', 'bounce'];
+        // Giảm số lượng hiệu ứng để tăng hiệu suất
+        const effects = ['none', 'heartbeat', 'pulse'];
         const randomEffect = effects[Math.floor(Math.random() * effects.length)];
 
         // Thêm lớp hiệu ứng đặc biệt nếu có
@@ -722,8 +824,8 @@ function createHearts(count = 30) {
             heart.classList.add('bounce');
         }
 
-        // Thêm hiệu ứng chuyển động ngẫu nhiên (60% dọc, 40% ngang)
-        const useHorizontal = Math.random() > 0.6;
+        // Thêm hiệu ứng chuyển động ngẫu nhiên (70% dọc, 30% ngang để giảm phức tạp)
+        const useHorizontal = Math.random() > 0.7;
         const animationClass = useHorizontal ? 'horizontal-moving' : 'vertical-moving';
 
         // Đặt độ to/nhỏ khác nhau cho border-radius để tạo ra hình dáng khác nhau
@@ -731,8 +833,8 @@ function createHearts(count = 30) {
             heart.style.borderRadius = `${Math.random() * 40 + 10}%`;
         }
 
-        // Thêm vào DOM trước khi thêm animation
-        heartsContainer.appendChild(heart);
+        // Thêm vào fragment thay vì DOM trực tiếp
+        fragment.appendChild(heart);
         window.currentHearts++; // Tăng số lượng trái tim hiện có
 
         // Đặt thời gian animation ngẫu nhiên
@@ -770,6 +872,9 @@ function createHearts(count = 30) {
             heart.style.transform = `rotate(${rotation}deg)`;
         }, animationDelay * 1000);
     }
+
+    // Thêm tất cả các phần tử vào DOM cùng một lúc
+    heartsContainer.appendChild(fragment);
 }
 
 // Hàm tạo ảnh người yêu
@@ -782,6 +887,11 @@ function createPhotos(count = 20) {
         return;
     }
 
+    // Nếu đang ở chế độ hiệu suất thấp, giảm số lượng ảnh
+    if (window.performanceMetrics.lowPerformanceMode) {
+        count = Math.max(1, Math.floor(count / 2));
+    }
+
     console.log("Container ảnh:", photosContainer);
     const isMobile = window.innerWidth <= 768;
     const viewportHeight = window.innerHeight;
@@ -792,6 +902,9 @@ function createPhotos(count = 20) {
 
     if (numberOfPhotos <= 0) return; // Không tạo thêm nếu đã đạt giới hạn
 
+    // Tạo fragment để giảm số lần reflow
+    const fragment = document.createDocumentFragment();
+
     // Sắp xếp ảnh theo lưới để không bị chồng lên nhau
     for (let i = 0; i < numberOfPhotos; i++) {
         const photo = document.createElement('img');
@@ -801,7 +914,9 @@ function createPhotos(count = 20) {
         const randomIndex = Math.floor(Math.random() * photoUrls.length);
         const imgSrc = photoUrls[randomIndex];
         photo.src = imgSrc;
-        console.log("Tạo ảnh với src:", imgSrc);
+
+        // Đặt loading="lazy" để tải ảnh lười biếng
+        photo.loading = "lazy";
 
         // Thêm xử lý lỗi nếu ảnh không tải được
         photo.onerror = function() {
@@ -810,7 +925,7 @@ function createPhotos(count = 20) {
             this.src = 'data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%23ff1493"/><text x="50%" y="50%" font-size="16" text-anchor="middle" fill="white" dy=".3em">Ảnh lỗi</text></svg>';
         };
 
-        // Đặt kích thước ngẫu nhiên
+        // Đặt kích thước ngẫu nhiên - nhỏ hơn trên thiết bị di động
         const size = isMobile ?
             Math.random() * 40 + 60 : // Kích thước nhỏ hơn trên di động
             Math.random() * 60 + 70; // Kích thước gốc trên desktop
@@ -842,16 +957,16 @@ function createPhotos(count = 20) {
         // Thêm hiệu ứng xoay nhẹ
         photo.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
 
-        // Thêm hiệu ứng khung ảnh ngẫu nhiên
-        if (Math.random() > 0.5) {
+        // Thêm hiệu ứng khung ảnh ngẫu nhiên cho một số ảnh
+        if (!window.performanceMetrics.lowPerformanceMode && Math.random() > 0.7) {
             const borderColors = ['#ff1493', '#ff69b4', '#ff6699', '#ff007f', '#ff66b2'];
             const borderColor = borderColors[Math.floor(Math.random() * borderColors.length)];
             photo.style.border = `4px solid ${borderColor}`;
             photo.style.boxShadow = `0 0 15px ${borderColor}`;
         }
 
-        // Thêm hiệu ứng chuyển động ngẫu nhiên (70% dọc, 30% ngang)
-        const useHorizontal = Math.random() > 0.7;
+        // Thêm hiệu ứng chuyển động ngẫu nhiên (80% dọc, 20% ngang để giảm phức tạp)
+        const useHorizontal = Math.random() > 0.8;
         const animationClass = useHorizontal ? 'horizontal-moving' : 'vertical-moving';
 
         // Thêm sự kiện click vào ảnh để phóng to
@@ -875,8 +990,8 @@ function createPhotos(count = 20) {
             }
         });
 
-        // Thêm vào DOM
-        photosContainer.appendChild(photo);
+        // Thêm vào fragment thay vì DOM trực tiếp
+        fragment.appendChild(photo);
         window.currentPhotos++; // Tăng số lượng ảnh hiện có
 
         // Đặt thời gian animation ngẫu nhiên
@@ -906,6 +1021,9 @@ function createPhotos(count = 20) {
         }, animationDelay * 1000);
     }
 
+    // Thêm tất cả các phần tử vào DOM cùng một lúc
+    photosContainer.appendChild(fragment);
+
     // Sau khi thêm tất cả ảnh mới, cập nhật sự kiện cảm ứng
     setTimeout(() => {
         addTouchEventsToPhotos();
@@ -934,6 +1052,9 @@ function createMovingMessages(count = 10) {
 
     if (numberOfMessages <= 0) return; // Không tạo thêm nếu đã đạt giới hạn
 
+    // Tạo fragment để giảm số lần reflow
+    const fragment = document.createDocumentFragment();
+
     // Phân bố đều các tin nhắn trên màn hình
     for (let i = 0; i < numberOfMessages; i++) {
         const message = document.createElement('div');
@@ -955,8 +1076,8 @@ function createMovingMessages(count = 10) {
         const estimatedWidth = message.textContent.length * (fontSize * 0.6);
         const estimatedHeight = fontSize * 2.5; // Bao gồm padding
 
-        // Đa dạng hóa kiểu hiển thị tin nhắn
-        if (Math.random() > 0.7) {
+        // Đa dạng hóa kiểu hiển thị tin nhắn - giảm số lượng kiểu để tăng hiệu suất
+        if (Math.random() > 0.8) {
             // Tạo một số tin nhắn với background khác nhau
             const bgColors = [
                 'rgba(255, 192, 203, 0.9)', // pink
@@ -975,8 +1096,8 @@ function createMovingMessages(count = 10) {
             message.style.borderStyle = 'solid';
         }
 
-        // Thêm hiệu ứng chuyển động ngẫu nhiên (60% dọc, 40% ngang)
-        const useHorizontal = Math.random() > 0.6;
+        // Thêm hiệu ứng chuyển động ngẫu nhiên (80% dọc, 20% ngang để giảm phức tạp)
+        const useHorizontal = Math.random() > 0.8;
         const animationClass = useHorizontal ? 'horizontal-moving' : 'vertical-moving';
 
         // Tìm vị trí không bị trùng lắp, ưu tiên lưới để phân bố đều
@@ -999,8 +1120,8 @@ function createMovingMessages(count = 10) {
         message.style.left = `${position.left}px`;
         message.style.top = `${position.top}px`;
 
-        // Thêm vào DOM
-        messagesContainer.appendChild(message);
+        // Thêm vào fragment thay vì DOM trực tiếp
+        fragment.appendChild(message);
         window.currentMessages++; // Tăng số lượng tin nhắn hiện có
 
         // Đặt thời gian animation ngẫu nhiên
@@ -1029,6 +1150,9 @@ function createMovingMessages(count = 10) {
             message.style.opacity = "1"; // Hiển thị tin nhắn
         }, animationDelay * 1000);
     }
+
+    // Thêm tất cả các phần tử vào DOM cùng một lúc
+    messagesContainer.appendChild(fragment);
 }
 
 // Thêm hỗ trợ cho sự kiện cảm ứng
@@ -1222,3 +1346,139 @@ document.addEventListener('click', function(event) {
         }, 10); // Độ trễ rất nhỏ để đảm bảo hiệu ứng mượt mà
     }
 });
+
+// Khởi tạo khi tải trang
+function initializeApp() {
+    console.log("Khởi tạo ứng dụng");
+
+    // Tạo các container nếu chưa tồn tại
+    const containers = ['hearts-container', 'photos-container', 'messages-container'];
+    containers.forEach(containerId => {
+        if (!document.getElementById(containerId)) {
+            const container = document.createElement('div');
+            container.id = containerId;
+            document.body.appendChild(container);
+            console.log(`Đã tạo container: ${containerId}`);
+        }
+    });
+
+    // Tải trước ảnh
+    preloadImages();
+
+    // Thiết lập lưới vị trí
+    setupPositionGrid();
+
+    // Thiết lập giới hạn số lượng phần tử theo kích thước màn hình
+    const isMobile = window.innerWidth <= 768;
+    const isSmallMobile = window.innerWidth <= 480;
+
+    // Thiết lập giới hạn số lượng phần tử - giảm số lượng để tăng hiệu suất
+    window.maxHearts = isSmallMobile ? 50 : (isMobile ? 80 : 120);
+    window.maxPhotos = isSmallMobile ? 20 : (isMobile ? 30 : 40);
+    window.maxMessages = isSmallMobile ? 15 : (isMobile ? 20 : 30);
+
+    // Khởi tạo số lượng phần tử hiện tại
+    window.currentHearts = 0;
+    window.currentPhotos = 0;
+    window.currentMessages = 0;
+
+    // Tạo phần tử ban đầu (giảm số lượng để tăng hiệu suất)
+    createHearts(isSmallMobile ? 20 : (isMobile ? 30 : 40));
+    createPhotos(isSmallMobile ? 8 : (isMobile ? 12 : 15));
+    createMovingMessages(isSmallMobile ? 6 : (isMobile ? 10 : 15));
+
+    // Thiết lập interval để tạo thêm phần tử với tần suất thấp hơn
+    const heartInterval = isMobile ? 3000 : 2500;
+    const photoInterval = isMobile ? 5000 : 4000;
+    const messageInterval = isMobile ? 4000 : 3500;
+
+    // Tạo ít phần tử hơn mỗi lần để giảm tải
+    window.heartIntervalId = setInterval(() => createHearts(2), heartInterval);
+    window.photoIntervalId = setInterval(() => createPhotos(1), photoInterval);
+    window.messageIntervalId = setInterval(() => createMovingMessages(1), messageInterval);
+
+    // Thêm sự kiện click để tạo trái tim - giảm số lượng
+    document.addEventListener('click', function(event) {
+        const count = isMobile ? 3 : 5;
+        createHearts(count);
+    });
+
+    // Thêm sự kiện chạm cho điện thoại - giảm số lượng
+    document.addEventListener('touchstart', function(event) {
+        if (event.touches.length > 0) {
+            const count = 3;
+            createHearts(count);
+        }
+    });
+
+    // Thêm sự kiện cảm ứng cho ảnh
+    addTouchEventsToPhotos();
+
+    // Bắt đầu kiểm tra và reset các phần tử
+    window.checkIntervalId = setInterval(checkAndResetElements, 1000);
+
+    // Thêm sự kiện khi tab không hiển thị để tạm dừng animation
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cập nhật lưới khi thay đổi kích thước màn hình
+    window.addEventListener('resize', debounce(function() {
+        setupPositionGrid();
+    }, 200));
+
+    // Cập nhật định kỳ lưới vị trí để tránh trùng lắp - tăng thời gian
+    setInterval(function() {
+        setupPositionGrid();
+    }, 90000); // Cập nhật mỗi 1.5 phút
+
+    // Bắt đầu theo dõi hiệu suất
+    window.performanceMetrics.lastFrameTime = performance.now();
+    monitorPerformance();
+
+    // Dọn dẹp bộ nhớ định kỳ
+    setInterval(function() {
+        if (window.gc) {
+            window.gc();
+        }
+    }, 60000); // Dọn dẹp mỗi phút nếu có thể
+}
+
+// Hàm xử lý khi tab ẩn/hiện để tiết kiệm tài nguyên
+function handleVisibilityChange() {
+    if (document.hidden) {
+        // Khi tab ẩn, tạm dừng tất cả animation để tiết kiệm tài nguyên
+        document.querySelectorAll('.vertical-moving, .horizontal-moving').forEach(el => {
+            el.style.animationPlayState = 'paused';
+        });
+
+        // Dừng các interval để không tạo thêm phần tử
+        clearInterval(window.heartIntervalId);
+        clearInterval(window.photoIntervalId);
+        clearInterval(window.messageIntervalId);
+        clearInterval(window.checkIntervalId);
+    } else {
+        // Khi tab hiện lại, tiếp tục animation
+        document.querySelectorAll('.vertical-moving, .horizontal-moving').forEach(el => {
+            el.style.animationPlayState = 'running';
+        });
+
+        // Khởi động lại các interval
+        const isMobile = window.innerWidth <= 768;
+        window.heartIntervalId = setInterval(() => createHearts(2), isMobile ? 3000 : 2500);
+        window.photoIntervalId = setInterval(() => createPhotos(1), isMobile ? 5000 : 4000);
+        window.messageIntervalId = setInterval(() => createMovingMessages(1), isMobile ? 4000 : 3500);
+        window.checkIntervalId = setInterval(checkAndResetElements, 1000);
+    }
+}
+
+// Hàm debounce để tối ưu hiệu suất khi resize
+function debounce(func, wait) {
+    let timeout;
+    return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func.apply(context, args);
+        }, wait);
+    };
+}
