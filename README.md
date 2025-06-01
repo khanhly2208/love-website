@@ -1,67 +1,39 @@
-# Trang Web Chúc Mừng Ngày Quốc Tế Thiếu Nhi
+# Love Website
 
-Đây là một trang web đặc biệt được tạo ra để chúc mừng Ngày Quốc tế Thiếu nhi dành cho người yêu của bạn. Trang web có nền màu hồng, nhiều trái tim bay và hiển thị ảnh của người yêu bạn khắp màn hình.
+Trang web tình yêu với hiệu ứng trái tim, ảnh và tin nhắn chuyển động.
+
+## Tính năng
+
+- Hiệu ứng trái tim bay
+- Ảnh người yêu chuyển động
+- Tin nhắn tình yêu di chuyển
+- Thiết kế responsive cho cả máy tính và điện thoại
 
 ## Cách sử dụng
 
-1. **Mở trang web**: Chỉ cần mở file `index.html` trong trình duyệt web để xem trang web.
+1. Clone repository này
+2. Thay đổi ảnh trong thư mục `images`
+3. Tùy chỉnh tin nhắn trong mảng `messages` trong file `script.js`
+4. Tùy chỉnh nội dung trang trong file `index.html`
 
-2. **Tạo thêm trái tim**: Nhấp chuột vào bất kỳ đâu trên trang web để tạo thêm trái tim tại vị trí đó.
+## Truy cập trang web
 
-## Cách tùy chỉnh
+Trang web được triển khai tại: https://khanhly2208.github.io/love-website
 
-### Thay đổi ảnh của người yêu
+## Tùy chỉnh
 
 Trong file `script.js`, bạn cần thay đổi mảng `photoUrls` bằng các đường dẫn đến ảnh của người yêu bạn:
 
 ```javascript
 const photoUrls = [
-    'đường_dẫn_đến_ảnh_1',
-    'đường_dẫn_đến_ảnh_2',
-    'đường_dẫn_đến_ảnh_3',
-    // Thêm nhiều ảnh nếu muốn
+    './images/your-image-1.jpg',
+    './images/your-image-2.jpg',
+    // Thêm ảnh khác ở đây
 ];
 ```
 
-Bạn có thể sử dụng:
-- Đường dẫn tuyệt đối đến ảnh trên internet
-- Đường dẫn tương đối đến ảnh trong thư mục dự án (ví dụ: 'images/anh1.jpg')
+Bạn cũng có thể thay đổi các tin nhắn trong mảng `messages`.
 
-### Thay đổi nội dung lời chúc
+## Ghi chú
 
-Trong file `index.html`, bạn có thể thay đổi nội dung lời chúc trong phần `message`:
-
-```html
-<div class="message">
-    <p>Em là điều tuyệt vời nhất trong cuộc đời anh</p>
-    <p>Chúc em luôn vui vẻ và hạnh phúc</p>
-</div>
-```
-
-### Thay đổi màu sắc
-
-Trong file `style.css`, bạn có thể thay đổi các màu sắc:
-
-- Màu nền: `background-color: #ffcce6;` trong selector `body`
-- Màu trái tim: `background-color: #ff1493;` trong selector `.heart` và `.heart:before, .heart:after`
-- Màu chữ: `color: #ff1493;` trong selector `.container`
-
-## Tạo thư mục chứa ảnh
-
-Bạn có thể tạo thư mục `images` để lưu trữ ảnh của người yêu:
-
-```
-project/
-├── index.html
-├── style.css
-├── script.js
-├── README.md
-└── images/
-    ├── anh1.jpg
-    ├── anh2.jpg
-    └── ...
-```
-
-## Lưu ý
-
-Hãy đảm bảo rằng bạn có quyền sử dụng ảnh và tôn trọng quyền riêng tư của người yêu khi sử dụng ảnh của họ trong dự án này. 
+Trang web này được tạo ra với tình yêu và JavaScript thuần. Không sử dụng thư viện bên ngoài. 
